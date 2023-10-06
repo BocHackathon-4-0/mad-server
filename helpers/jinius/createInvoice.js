@@ -21,51 +21,6 @@ async function createInvoice({ token, email }) {
 
   const invoiceNumber = `MAD-02${Math.floor(Math.random() * 1000)}`;
 
-  const raw = JSON.stringify({
-    discount: 0,
-    documentNumber: "HR-001",
-    dueDate: "2023-11-19T22:00:00Z",
-    initial: 2,
-    issueDate: "2023-10-04T14:32:20.678Z",
-    net: 2.38,
-    totalAmount: 2.38,
-    vatAmount: 0.38,
-    kind: "<string>",
-    id: "<string>",
-    status: "",
-    modificationDate: "2023-10-04T14:32:20.678Z",
-    fileId: "",
-    description: "some description",
-    issuerVatNumber: "10425388C",
-    issuerTaxIdNumber: "10425388C",
-    issuerCompanyRegistrationNumber: "HE425388",
-    issuerBusinessUnitId: "",
-    issuerBusinessUnitIdentifiers: [],
-    recipientVatNumber: "10000001A",
-    recipientTaxIdNumber: "90000001A",
-    recipientCompanyRegistrationNumber: "AA000001",
-    recipientBusinessUnitId: "",
-    recipientBusinessUnitIdentifiers: [],
-    orderReference: "<string>",
-    lineItems: [
-      {
-        code: "some12",
-        lineTotal: 2.38,
-        price: 2,
-        quantity: 1,
-        taxAmount: 0.38,
-        taxPercentage: "Exempted",
-        unit: "Pieces",
-        description: "This is an invoice from MAD Enterprises LTD",
-        discountPercentage: 0,
-        discount: 0,
-      },
-    ],
-    documents: [],
-    payments: [],
-    supportingFilesIds: [],
-  });
-
   const rawTwo = JSON.stringify({
     net: 165,
     vatAmount: 20.85,
@@ -137,7 +92,7 @@ async function createInvoice({ token, email }) {
   };
 
   try {
-    const res = await fetch(
+    await fetch(
       `${JINIUS_CONSTANTS.api}${JINIUS_CONSTANTS.endPoints.createInvoice}`,
       requestOptions
     ).then((response) => response.json());

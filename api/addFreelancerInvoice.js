@@ -3,11 +3,14 @@ const createInvoice = require("../helpers/jinius/createInvoice");
 const cyprusTaxCalculator = require("../helpers/tax/cyprusTaxCalculator");
 const moneySavingTips = require("../helpers/ai/moneySavingTips");
 const sendEmail = require("../helpers/email/sendEmail");
+const addDoc = require("../helpers/firestore/addDoc");
+const { updateUserInvestments } = require("../helpers/firestore/update");
 
 async function addFreelancerInvoice(req, res) {
   console.log(">>> createJiniusInvoice");
 
-  const { name, email, invoiceDetails, freelancerType, invest } = req.body;
+  const { userId, name, email, invoiceDetails, freelancerType, invest } =
+    req.body;
   console.log(name, email);
   console.log(invoiceDetails);
   console.log(freelancerType);
@@ -32,17 +35,34 @@ async function addFreelancerInvoice(req, res) {
       });
 
     //* Firebase
-    // add to DB invoice details
+    await addDoc({
+      dbCollection: "Invoices",
+      data: {
+        userId,
+        email,
+        date: new Date(),
+        invoiceTotal,
+        serviceFee,
+        invest,
+        sum,
+        taxCalculator: {
+          gross,
+          socialInsurance,
+          gesy,
+          tax,
+          net,
+        },
+      },
+    });
+
+    await updateUserInvestments({ userId, amount: invest });
+
     // end of the month we can sum them up using cron job to provide accurate tax breakdown
-    //* We get user and increment his investment balance
 
     //* chatGPT money saving tips
-    // const tip = await moneySavingTips({ freelancerType });
-    // const tip =
-    // "As a software developer, saving money can be achieved by minimizing unnecessary software subscriptions, utilizing open-source tools, and optimizing cloud service usage for cost-effective solutions.";
+    const tip = await moneySavingTips({ freelancerType });
 
     //* Email
-
     const date = new Date();
     const currentDay = String(date.getDate()).padStart(2, "0");
     const currentMonth = String(date.getMonth() + 1).padStart(2, "0");
@@ -59,7 +79,7 @@ async function addFreelancerInvoice(req, res) {
         invoiceTotal,
         date: currentDate,
         serviceFee,
-        tip: "demo",
+        tip,
         gross,
         socialInsurance,
         gesy,
