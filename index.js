@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config({ path: "./.env.development" });
 
 const decodeJWT = require("./auth/decodeJWT");
+const validateAccessToken = require("./auth/validateAccessToken");
 
 // validate
 // const validateUser = require("./auth/validateUser");
@@ -31,7 +32,7 @@ app.get("/", (req, res) => res.send("Hello World"));
 
 /// POST
 
-app.post("/add-freelancer-invoice", addFreelancerInvoice);
+app.post("/add-freelancer-invoice", validateAccessToken, addFreelancerInvoice);
 
 app.listen(port, () => {
   console.log(

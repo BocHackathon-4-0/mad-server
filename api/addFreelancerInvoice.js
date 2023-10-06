@@ -23,7 +23,7 @@ async function addFreelancerInvoice(req, res) {
 
     //* MAD service fee
     const invoiceTotal = invoiceDetails.total;
-    const serviceFee = invoiceTotal * 0.012;
+    const serviceFee = (invoiceTotal * 0.012).toFixed(2);
     // const 50 euro
     const sum = invoiceTotal - serviceFee - invest;
 

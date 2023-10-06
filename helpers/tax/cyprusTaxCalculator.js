@@ -62,7 +62,6 @@ async function cyprusTaxCalculator({ monthly = true, amount }) {
     totalTax: totalTax.toFixed(2),
     net: (calculateSalaryCy.gross_month - totalTax).toFixed(2),
   };
-  console.log(amount, result);
   return result;
 }
 

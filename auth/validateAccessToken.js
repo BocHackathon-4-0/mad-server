@@ -1,7 +1,7 @@
 function validateUser(req, res, next) {
-  const { token } = req;
-  if (!token || token !== process.env.API_ACCESS_TOKEN) {
-    console.log("> 401 unauthorized user | Error validateUser");
+  const { accessToken } = req;
+  if (!accessToken || accessToken !== process.env.API_ACCESS_TOKEN) {
+    console.log("> 401 check token");
     return res.status(401).send();
   }
 
