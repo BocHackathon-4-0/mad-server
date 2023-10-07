@@ -9,7 +9,7 @@ const companiesLookup = {
   },
 };
 
-async function createInvoice({ token, companyEmail, initials }) {
+async function createInvoice({ token, email, companyEmail, initials, amount }) {
   console.log(">> Jinius API - create invoice");
 
   const myHeaders = new Headers();
@@ -21,23 +21,37 @@ async function createInvoice({ token, companyEmail, initials }) {
     "incap_ses_8219_2975890=QjJ4TvOV1Uu0g6PoTMIPcsmSHWUAAAAA49yhjvnZdowRVXLAwAUHAw==; visid_incap_2975890=z/PFbnzVTQCZ0X+Zcq4nsV6ZFWUAAAAAQUIPAAAAAAArJkZ7+AcHoJCQalh60y64"
   );
 
-  const invoiceNumber = `MAD-${initials}-02${Math.floor(Math.random() * 1000)}`;
+  const invoiceNumber = `MAD-${initials}-${Math.floor(Math.random() * 20000)}`;
 
   const rawTwo = JSON.stringify({
-    net: 165,
-    vatAmount: 20.85,
-    totalAmount: 185.85,
-    discount: 35,
-    initial: 200,
+    net: amount,
+    vatAmount: 0,
+    totalAmount: amount,
+    discount: 0,
+    initial: amount,
+    lineItems: [
+      {
+        code: "LI001",
+        description: `Freelance work for ${email}`,
+        quantity: 1,
+        unit: "Pieces",
+        price: amount,
+        discountPercentage: 0,
+        taxPercentage: "None",
+        discount: 0,
+        lineTotal: amount,
+        taxAmount: 0,
+      },
+    ],
     documentNumber: invoiceNumber,
     dueDate: "2023-11-19T22:00:00Z",
-    issueDate: "2023-10-04T14:32:20.678Z",
+    issueDate: new Date().toISOString(),
     kind: "<string>",
     id: "<string>",
     status: "",
-    modificationDate: "2023-10-04T14:32:20.678Z",
+    modificationDate: new Date().toISOString(),
     fileId: "",
-    description: "some description",
+    description: `Freelance work for ${email}`,
     issuerVatNumber: "38941288C",
     issuerTaxIdNumber: "38941288C",
     issuerCompanyRegistrationNumber: "AB389412",
@@ -55,32 +69,6 @@ async function createInvoice({ token, companyEmail, initials }) {
     //   },
     // ],
     orderReference: "",
-    lineItems: [
-      {
-        code: "LI001",
-        description: "Line Item 1",
-        quantity: 10,
-        unit: "Pieces",
-        price: 10,
-        discountPercentage: 25,
-        taxPercentage: "FivePercent",
-        discount: 25,
-        lineTotal: 78.75,
-        taxAmount: 3.75,
-      },
-      {
-        code: "LI002",
-        description: "Line Item 2",
-        quantity: 10,
-        unit: "Pieces",
-        price: 10,
-        discountPercentage: 10,
-        taxPercentage: "NineteenPercent",
-        discount: 10,
-        lineTotal: 107.1,
-        taxAmount: 17.1,
-      },
-    ],
     documents: [],
     payments: [],
     supportingFilesIds: [],
@@ -101,7 +89,7 @@ async function createInvoice({ token, companyEmail, initials }) {
     // console.log(res);
     // console.log(res.status);
 
-    console.log(">> Jinius API - success invoice created");
+    console.log(">> Jinius API - success invoice created", invoiceNumber);
 
     if (res.status) {
       return invoiceNumber;

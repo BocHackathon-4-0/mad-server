@@ -1,4 +1,4 @@
-async function trade({ ticker = "TSLA_US_EQ", amount }) {
+async function trade({ ticker = "TSLA_US_EQ" }) {
   const apiKey = process.env.TRADING_212_API;
 
   try {

@@ -5,7 +5,7 @@ const moneySavingTips = require("../helpers/ai/moneySavingTips");
 const stocksToInvest = require("../helpers/ai/stocksToInvest");
 const sendEmail = require("../helpers/email/sendEmail");
 const addDoc = require("../helpers/firestore/addDoc");
-const trade = require("../helpers/trading/trade");
+// const trade = require("../helpers/trading/trade");
 const { updateUserSavings } = require("../helpers/firestore/update");
 
 async function addFreelancerInvoice(req, res) {
@@ -23,9 +23,6 @@ async function addFreelancerInvoice(req, res) {
   } = req.body;
   // console.log(req.body);
 
-  // return;
-  // res.status(200).json({ body: "success" });
-
   try {
     //* Jinius
     const accessToken = await getAccessToken();
@@ -36,9 +33,11 @@ async function addFreelancerInvoice(req, res) {
       .toUpperCase();
 
     const invoiceNumber = await createInvoice({
+      email,
       token: accessToken,
       companyEmail,
       initials,
+      amount: invoiceDetails.total,
     });
 
     //* MAD service fee
@@ -81,10 +80,12 @@ async function addFreelancerInvoice(req, res) {
 
     const shuffle = (array) => array.sort(() => Math.random() - 0.5);
 
+    const stock = shuffle(stocks)[0];
+
     await updateUserSavings({
       userId,
       amount: invest,
-      stock: shuffle(stocks)[0],
+      stock,
     });
 
     // testing >
@@ -116,7 +117,7 @@ async function addFreelancerInvoice(req, res) {
         invest,
         totalTax,
         net,
-        stocks: stocks.join(" | "),
+        stocks: stock,
       },
     });
 

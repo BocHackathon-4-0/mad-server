@@ -10,6 +10,7 @@ const validateAccessToken = require("./auth/validateAccessToken");
 
 // api
 const addFreelancerInvoice = require("./api/addFreelancerInvoice");
+const getTaxBreakdown = require("./api/taxCalculator");
 
 const app = express();
 const port = process.env.PORT;
@@ -33,6 +34,7 @@ app.get("/", (req, res) => res.send("Hello World"));
 /// POST
 
 app.post("/add-freelancer-invoice", validateAccessToken, addFreelancerInvoice);
+app.get("/tax-calculator", getTaxBreakdown);
 
 // use a get to use get jinus api and filter by initials in documentnumber
 // app.get("/freelancer-invoics", validateAccessToken, );
