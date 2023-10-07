@@ -1,5 +1,5 @@
 async function cyprusTaxCalculator({ monthly = true, amount }) {
-  console.log(">> cyprusTaxCalculator", amount);
+  console.log(">> Calculating tax");
 
   if (!monthly) {
     return;

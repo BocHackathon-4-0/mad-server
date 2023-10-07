@@ -1,7 +1,7 @@
 const JINIUS_CONSTANTS = require("./constants");
 
 async function getAccessToken() {
-  console.log(">> getAccessToken");
+  console.log(">> Jinius API - get access token");
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -16,8 +16,8 @@ async function getAccessToken() {
 
   const urlencoded = new URLSearchParams();
   urlencoded.append("grant_type", "client_credentials");
-  urlencoded.append("client_id", "5f41878a-6e7b-49c9-ac90-b2a5927eb83c");
-  urlencoded.append("client_secret", "izUc9hAlpZrvpA8twfWgcjYV73NGyYN6");
+  urlencoded.append("client_id", process.env.JINIUS_CLIENT_ID);
+  urlencoded.append("client_secret", process.env.JINIUS_CLIENT_SECRET);
 
   const requestOptions = {
     method: "POST",

@@ -2,29 +2,48 @@ const getAccessToken = require("../helpers/jinius/getAccessToken");
 const createInvoice = require("../helpers/jinius/createInvoice");
 const cyprusTaxCalculator = require("../helpers/tax/cyprusTaxCalculator");
 const moneySavingTips = require("../helpers/ai/moneySavingTips");
+const stocksToInvest = require("../helpers/ai/stocksToInvest");
 const sendEmail = require("../helpers/email/sendEmail");
 const addDoc = require("../helpers/firestore/addDoc");
-const { updateUserInvestments } = require("../helpers/firestore/update");
+const trade = require("../helpers/trading/trade");
+const { updateUserSavings } = require("../helpers/firestore/update");
 
 async function addFreelancerInvoice(req, res) {
-  console.log(">>> createJiniusInvoice");
+  console.log(">>> MAD-API >>>");
+  console.log("");
 
-  const { userId, name, email, invoiceDetails, freelancerType, invest } =
-    req.body;
-  console.log(name, email);
-  console.log(invoiceDetails);
-  console.log(freelancerType);
+  const {
+    userId,
+    name,
+    companyEmail,
+    email,
+    invoiceDetails,
+    freelancerType,
+    invest,
+  } = req.body;
+  // console.log(req.body);
+
+  // return;
+  // res.status(200).json({ body: "success" });
 
   try {
     //* Jinius
     const accessToken = await getAccessToken();
     // need to pass params values: amount, descriptions, names, company ids
-    const invoiceNumber = await createInvoice({ token: accessToken });
+    const initials = name
+      .match(/(\b\S)?/g)
+      .join("")
+      .toUpperCase();
+
+    const invoiceNumber = await createInvoice({
+      token: accessToken,
+      companyEmail,
+      initials,
+    });
 
     //* MAD service fee
     const invoiceTotal = invoiceDetails.total;
-    const serviceFee = (invoiceTotal * 0.012).toFixed(2);
-    // const 50 euro
+    const serviceFee = 1;
     const sum = invoiceTotal - serviceFee - invest;
 
     //* Tax calculation
@@ -35,6 +54,7 @@ async function addFreelancerInvoice(req, res) {
       });
 
     //* Firebase
+    console.log(">> Add invoice record for freelancer");
     await addDoc({
       dbCollection: "Invoices",
       data: {
@@ -55,12 +75,21 @@ async function addFreelancerInvoice(req, res) {
       },
     });
 
-    await updateUserInvestments({ userId, amount: invest });
-
-    // end of the month we can sum them up using cron job to provide accurate tax breakdown
-
     //* chatGPT money saving tips
     const tip = await moneySavingTips({ freelancerType });
+    const stocks = await stocksToInvest({ freelancerType });
+
+    const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+
+    await updateUserSavings({
+      userId,
+      amount: invest,
+      stock: shuffle(stocks)[0],
+    });
+
+    // testing >
+    // await trade({ amount: 0 });
+    // testing <
 
     //* Email
     const date = new Date();
@@ -87,12 +116,16 @@ async function addFreelancerInvoice(req, res) {
         invest,
         totalTax,
         net,
+        stocks: stocks.join(" | "),
       },
     });
+
+    console.log(">> Success!");
 
     res.status(200).json({ body: "success" });
   } catch (e) {
     // console.log(e);
+    console.log("error", e);
     res.status(500).json({ body: "error" });
   }
 }

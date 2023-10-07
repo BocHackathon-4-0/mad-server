@@ -9,7 +9,7 @@ async function sendEmail({
   scheduledDate = null,
   params,
 }) {
-  console.log(">> sendEmail");
+  console.log(">> Send email breakdown to freelancer");
   if (!send) {
     console.log("sending disabled");
     return;
@@ -37,10 +37,10 @@ async function sendEmail({
   }
 
   try {
-    console.log("> Email details", JSON.stringify({ to, templateId, params }));
+    // console.log("> Email details", JSON.stringify({ to, templateId, params }));
     apiInstance.sendTransacEmail(sendSmtpEmail).then(
       (data) => {
-        console.log(`> SIB API returned data: ${JSON.stringify(data)}`);
+        // console.log(`> SIB API returned data: ${JSON.stringify(data)}`);
       },
       (error) => {
         console.log(

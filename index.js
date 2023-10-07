@@ -34,6 +34,9 @@ app.get("/", (req, res) => res.send("Hello World"));
 
 app.post("/add-freelancer-invoice", validateAccessToken, addFreelancerInvoice);
 
+// use a get to use get jinus api and filter by initials in documentnumber
+// app.get("/freelancer-invoics", validateAccessToken, );
+
 app.listen(port, () => {
   console.log(
     "[ >>> Server listening on port",

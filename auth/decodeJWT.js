@@ -1,6 +1,7 @@
 // const firebase = require("../firebase");
 
 async function decodeJWT(req, res, next) {
+  console.log(">>>", new Date());
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
